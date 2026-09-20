@@ -30,7 +30,7 @@ scene.add(sun,sun.target);
 function box(w,h,d,x,y,z,mat=white,shadow=true){const m=new T.Mesh(new T.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);m.castShadow=shadow;m.receiveShadow=true;scene.add(m);return m;}
 function wall(a,b,z=0){box(b-a,H,.35,(a+b)/2,H/2,z-.175);box(b-a,.07,.05,(a+b)/2,.07,z+.025,new T.MeshStandardMaterial({color:sideWallColor}),false);}
 function alcove(a,b,depth){wall(a,b,-depth);box(.32,H,depth,a,H/2,-depth/2,side);box(.32,H,depth,b,H/2,-depth/2,side);box(b-a,.25,depth,(a+b)/2,H-.05,-depth/2);}
-wall(-14,6.1);alcove(6.1,10.3,3.6);wall(10.3,35);alcove(35,42,3);wall(42,47.5);alcove(47.5,51.5,3);wall(51.5,76);alcove(76,83,3.5);wall(83,89);alcove(89,93,3.4);wall(93,106);
+wall(-14,6.1);alcove(6.1,10.3,3.6);wall(10.3,36.5);alcove(35,42,3);wall(42,47.5);alcove(47.5,51.5,3);wall(51.5,76);alcove(76,83,3.5);wall(83,89);alcove(89,93,3.4);wall(93,106);
 
 function lightShaftTexture(){
  const c=document.createElement('canvas');c.width=256;c.height=1024;
@@ -76,7 +76,7 @@ mirror.material.fragmentShader=mirror.material.fragmentShader.replace('vec4 base
  for(int i=-1;i<=1;i++){for(int j=-1;j<=1;j++){if(i!=0||j!=0)base+=texture2D(tDiffuse,uv+vec2(float(i)*0.0015,float(j)*0.003))*0.095;}}
 `).replace('vec4( blendOverlay( base.rgb, color ), 1.0 )','vec4( blendOverlay( base.rgb, color ), 0.23 )');scene.add(mirror);
 
-const clickable=[];const fontReady=Promise.all([document.fonts.load('700 60px GalleryCondensed'),document.fonts.load('400 60px GalleryCondensed'),document.fonts.load('400 24px GalleryBody'),document.fonts.load('500 30px GalleryHand')]);await fontReady;
+const clickable=[];const scrollCueImage=new Image();const scrollCueReady=new Promise((resolve,reject)=>{scrollCueImage.onload=resolve;scrollCueImage.onerror=reject;scrollCueImage.src='./scroll-down.svg';});const fontReady=Promise.all([document.fonts.load('700 60px GalleryCondensed'),document.fonts.load('400 60px GalleryCondensed'),document.fonts.load('400 24px GalleryBody'),document.fonts.load('500 30px GalleryHand')]);await Promise.all([fontReady,scrollCueReady]);
 function surface(w,h,draw,x,y,z=.018){const c=document.createElement('canvas');c.width=Math.round(w*210);c.height=Math.round(h*210);const ctx=c.getContext('2d');ctx.scale(210,210);draw(ctx);const tex=new T.CanvasTexture(c);tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=4;const m=new T.Mesh(new T.PlaneGeometry(w,h),new T.MeshStandardMaterial({map:tex,transparent:true,roughness:.95,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1}));m.position.set(x,y,z);m.receiveShadow=true;scene.add(m);return m;}
 function text(ctx,s,x,y,size=.3,color='#171615',bold=false){ctx.fillStyle=color;ctx.font=`${bold?'700':'400'} ${size}px GalleryCondensed, Arial, sans-serif`;ctx.fillText(s,x,y,ctx.canvas.width/210-x-.06);}
 function wrap(ctx,s,x,y,width,size=.16){ctx.font=`400 ${size}px GalleryBody, Arial`;ctx.fillStyle='#242220';let line='';for(const word of s.split(' ')){if(ctx.measureText(line+word).width>width){ctx.fillText(line,x,y);y+=size*1.5;line='';}line+=word+' ';}ctx.fillText(line,x,y);return y;}
@@ -111,17 +111,15 @@ surface(11.6,5.1,c=>{
  c.save();c.translate(6.95,3.28);c.rotate(-.025);c.font='500 .25px GalleryHand';c.fillStyle='#242322';
  for(const [i,line] of ['Od strategii, przez design,','po wdrożenie i wsparcie. Sprawnie,','solidnie i z myślą o wynikach.'].entries())c.fillText(line,0,i*.27,2.8);
  c.restore();button(c,'Zobacz realizacje',6.95,4.07,1.65);
- // Simple curved direction arrow, painted directly on the wall.
- c.save();c.strokeStyle='#191817';c.lineWidth=.04;c.lineJoin='round';c.lineCap='round';
- c.beginPath();c.moveTo(10.18,4.04);c.bezierCurveTo(10.12,3.64,10.41,3.39,10.88,3.39);c.lineTo(10.86,3.23);c.lineTo(11.18,3.48);c.lineTo(10.87,3.77);c.lineTo(10.88,3.58);c.bezierCurveTo(10.56,3.59,10.36,3.73,10.38,4.04);c.closePath();c.stroke();
+ c.drawImage(scrollCueImage,10.08,3.15,1.14,1.03);
  c.font='400 .15px GalleryBody';c.fillStyle='#242322';c.textAlign='center';c.fillText('Przewiń, aby odkryć',10.65,4.34,1.8);c.restore();
 },0,2.7);
 makeAction(1.975,1.01,1.65,'Zobacz realizacje',()=>moveTo(54));
-makeAction(4.85,1.08,1.8,'Przewiń w bok',()=>moveTo(12.8));
-surface(4.5,4.7,c=>{text(c,'Standard wykonania',.35,1.25,.44);wrap(c,'Wykorzystuję technologie, które gwarantują szybkość i bezpieczeństwo, dbając o każdy detal.',.35,1.9,3.8,.19);button(c,'Poznaj ofertę',.35,3.76,1.4);},13.25,2.7);
-makeAction(12.05,1.02,1.4,'Poznaj ofertę',()=>moveTo(18.4));
+makeAction(4.85,1.08,1.8,'Przewiń w bok',()=>moveTo(16.8));
+surface(4.5,4.7,c=>{text(c,'Standard wykonania',.35,1.75,.44);wrap(c,'Wykorzystuję technologie, które gwarantują szybkość i bezpieczeństwo, dbając o każdy detal.',.35,2.3,3.8,.19);button(c,'Poznaj ofertę',.35,3.26,1.4);},13.25,2.7);
+makeAction(12.05,1.02,1.4,'Poznaj ofertę',()=>moveTo(32.4));
 const serviceTitles=["Responsywność", "Wydajność", "Bezpieczeństwo", "Solidne rozwiązania", "Od strategii do wdrożenia", "Stała współpraca"];const serviceCopies=["Układ dopasowany do telefonu i tabletu, bez kompromisów w czytelności.", "Szybkie ładowanie i lekki front, który nie blokuje treści.", "Pewne wdrożenie, certyfikaty SSL i aktualne standardy bezpieczeństwa.", "Stabilne integracje i czysty kod gotowy pod dalszy rozwój Twojego biznesu.", "Kompleksowo prowadzę od strategii, przez design, po wdrożenie i wsparcie. Sprawnie, solidnie i z myślą o wynikach.", "Stała komunikacja, jasne etapy i pełna opieka od briefu po wsparcie po wdrożeniu."];
-serviceTitles.forEach((s,i)=>{const x=17.2+i*3.45;surface(3.05,4.7,c=>{text(c,'0'+(i+1),.1,1.1,.2);text(c,s,.1,1.7,.34);wrap(c,serviceCopies[i],.1,2.3,2.72,.17);button(c,'Więcej  ›',.1,3.72,1.02,true);},x,2.7);makeAction(x-.9,1.14,1.05,s,()=>details(s,serviceCopies[i]));});
+serviceTitles.forEach((s,i)=>{const x=17.2+i*3.45;surface(3.35,4.7,c=>{text(c,'0'+(i+1),.1,1.1,.2);text(c,s,.1,1.7,.34);wrap(c,serviceCopies[i],.1,2.3,3.02,.17);},x,2.7);makeAction(x-.9,1.14,1.05,s,()=>details(s,serviceCopies[i]));});
 
 function pedestal(x,z){box(1.25,.12,1.1,x,.06,z);box(1.06,1.2,.92,x,.7,z);box(1.3,.12,1.13,x,1.35,z);}
 pedestal(10.7,-1.9);surface(1.5,1.7,c=>text(c,'pm',.02,1.25,1.0,'#f06a5a',true),10.7,2.55,-1.8);
@@ -195,7 +193,7 @@ let reduced=motionPreference.matches;
 let lenis;
 function configureScroll(){
  lenis?.destroy();
- lenis=reduced?null:new Lenis({lerp:.085,smoothWheel:true,syncTouch:false,wheelMultiplier:.85,autoRaf:false,prevent:node=>Boolean(node.closest?.('dialog, #wall-contact'))});
+ lenis=new Lenis({lerp:.1,smoothWheel:true,syncTouch:false,wheelMultiplier:2,autoRaf:false,respectReducedMotion:false,prevent:node=>Boolean(node.closest?.('dialog, #wall-contact'))});
  if(document.querySelector('dialog[open]'))lenis?.stop();
 }
 configureScroll();
@@ -222,6 +220,6 @@ addEventListener('keydown',e=>{
  e.preventDefault();if(lenis)lenis.scrollTo(target,{immediate:true});else scrollTo({top:target,behavior:'instant'});
 });
 document.querySelector('.sq').onclick=()=>document.querySelector('#navigation').showModal();document.querySelectorAll('dialog .close').forEach(b=>b.onclick=()=>b.closest('dialog').close());document.querySelectorAll('[data-position]').forEach(b=>b.onclick=()=>{b.closest('dialog').close();moveTo(Number(b.dataset.position));});document.querySelector('.hire').onclick=()=>moveTo(98.5);document.querySelector('.logo').onclick=e=>{e.preventDefault();moveTo(0)};
-function animate(now){const dt=Math.min((now-last)/1000,.05);last=now;lenis?.raf(now);const scrollTarget=Math.max(0,Math.min(1,(lenis?lenis.animatedScroll:scrollY)/Math.max(1,document.documentElement.scrollHeight-innerHeight)));progress=Math.max(0,Math.min(1,smoothStep(scrollMotion,scrollTarget,dt,reduced)));softPointerX=T.MathUtils.lerp(softPointerX,pointerX,1-Math.exp(-dt*5));softPointerY=T.MathUtils.lerp(softPointerY,pointerY,1-Math.exp(-dt*5));const x=progress*END;const nearby=sconcePositions.slice().sort((a,b)=>Math.abs(a.x-x)-Math.abs(b.x-x));sconceLights.forEach((light,i)=>{const p=nearby[i];light.position.set(p.x,4.05+p.sign*.2,-p.d+.22);light.target.position.set(p.x,4.05+p.sign*1.3,-p.d+.02);light.target.updateMatrixWorld();light.intensity=7*(1-T.MathUtils.smoothstep(Math.abs(p.x-x),6,11));});const sway=reduced?0:softPointerX*.045;camera.position.set(x+sway,2.77-(reduced?0:softPointerY*.02),8.8);camera.lookAt(x+.1,2.65,0);camera.updateMatrixWorld();positionContactForm(x);sun.position.set(x+4.8,11,7);sun.target.position.set(x,0,-2);sun.target.updateMatrixWorld();renderer.render(scene,camera);requestAnimationFrame(animate);}
+function animate(now){const dt=Math.min((now-last)/1000,.05);last=now;lenis?.raf(now);const scrollTarget=Math.max(0,Math.min(1,(lenis?lenis.targetScroll:scrollY)/Math.max(1,document.documentElement.scrollHeight-innerHeight)));progress=Math.max(0,Math.min(1,smoothStep(scrollMotion,scrollTarget,dt,false)));softPointerX=T.MathUtils.lerp(softPointerX,pointerX,1-Math.exp(-dt*5));softPointerY=T.MathUtils.lerp(softPointerY,pointerY,1-Math.exp(-dt*5));const x=progress*END;const nearby=sconcePositions.slice().sort((a,b)=>Math.abs(a.x-x)-Math.abs(b.x-x));sconceLights.forEach((light,i)=>{const p=nearby[i];light.position.set(p.x,4.05+p.sign*.2,-p.d+.22);light.target.position.set(p.x,4.05+p.sign*1.3,-p.d+.02);light.target.updateMatrixWorld();light.intensity=7*(1-T.MathUtils.smoothstep(Math.abs(p.x-x),6,11));});const sway=reduced?0:softPointerX*.045;camera.position.set(x+sway,2.77-(reduced?0:softPointerY*.02),8.8);camera.lookAt(x+.1,2.65,0);camera.updateMatrixWorld();positionContactForm(x);sun.position.set(x+4.8,11,7);sun.target.position.set(x,0,-2);sun.target.updateMatrixWorld();renderer.render(scene,camera);requestAnimationFrame(animate);}
 document.querySelector('#loading').hidden=true;requestAnimationFrame(animate);
 canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();document.querySelector('#loading').hidden=false;document.querySelector('#loading').textContent='Przerwano renderowanie 3D. Odśwież stronę, aby kontynuować.';});
