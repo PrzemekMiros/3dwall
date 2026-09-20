@@ -121,11 +121,12 @@ makeAction(4.85,1.08,1.8,'Przewiń w bok',()=>moveTo(22.2));
 surface(4.5,4.7,c=>{text(c,'Standard wykonania',.35,1.75,.44);wrap(c,'Wykorzystuję technologie, które gwarantują szybkość i bezpieczeństwo, dbając o każdy detal.',.35,2.3,3.8,.19);button(c,'Poznaj ofertę',.35,3.26,1.4);},18.65,2.7);
 makeAction(17.45,1.02,1.4,'Poznaj ofertę',()=>moveTo(37.8));
 const serviceTitles=["Responsywność", "Wydajność", "Bezpieczeństwo", "Solidne rozwiązania", "Od briefu do wdrożenia", "Stała współpraca"];const serviceCopies=["Układ dopasowany do telefonu i tabletu, bez kompromisów w czytelności.", "Szybkie ładowanie i lekki front, który nie blokuje treści.", "Pewne wdrożenie, certyfikaty SSL i aktualne standardy bezpieczeństwa.", "Stabilne integracje i czysty kod gotowy pod dalszy rozwój Twojego biznesu.", "Kompleksowo prowadzę od strategii, przez design, po wdrożenie i wsparcie. Sprawnie, solidnie i z myślą o wynikach.", "Stała komunikacja, jasne etapy i pełna opieka od briefu po wsparcie po wdrożeniu."];
-const mobile=innerWidth<760;const serviceWidth=mobile?3.7:3.35;const serviceTitleSize=mobile?.26:.34;const serviceCopySize=mobile?.15:.17;
-serviceTitles.forEach((s,i)=>{const x=22.6+i*3.45;surface(serviceWidth,4.7,c=>{text(c,'0'+(i+1),.1,1.1,.2);const titleBottom=wrapHeading(c,s,.1,1.7,serviceWidth-.3,serviceTitleSize);wrap(c,serviceCopies[i],.1,Math.max(2.3,titleBottom+.32),serviceWidth-.3,serviceCopySize);},x,2.7);makeAction(x-.9,1.14,1.05,s,()=>details(s,serviceCopies[i]));});
+const mobile=innerWidth<760;const serviceWidth=mobile?3.7:3.35;const serviceTextWidth=mobile?2.95:2.62;const serviceTitleSize=mobile?.26:.34;const serviceCopySize=mobile?.15:.17;
+serviceTitles.forEach((s,i)=>{const x=22.6+i*3.45;surface(serviceWidth,4.7,c=>{text(c,'0'+(i+1),.1,1.1,.2);const titleBottom=wrapHeading(c,s,.1,1.7,serviceTextWidth,serviceTitleSize);wrap(c,serviceCopies[i],.1,Math.max(2.3,titleBottom+.32),serviceTextWidth,serviceCopySize);},x,2.7);makeAction(x-.9,1.14,1.05,s,()=>details(s,serviceCopies[i]));});
 
 function pedestal(x,z){box(1.25,.12,1.1,x,.06,z);box(1.06,1.2,.92,x,.7,z);box(1.3,.12,1.13,x,1.35,z);}
-pedestal(10.7,-1.9);surface(1.5,1.7,c=>text(c,'pm',.02,1.25,1.0,'#f06a5a',true),10.7,2.55,-1.8);
+const screenBaseMat=new T.MeshStandardMaterial({color:'#dedfda',roughness:.8});
+box(5.8,.78,1.2,10.8,.68,-2.95,screenBaseMat);
 function plant(x,z,height=2.1){const pot=new T.Mesh(new T.CylinderGeometry(.24,.19,.5,24),new T.MeshStandardMaterial({color:'#ddd8cb',roughness:.55}));pot.position.set(x,.45,z);pot.castShadow=true;scene.add(pot);const trunk=box(.04,height*.65,.04,x,height*.37+.5,z,new T.MeshStandardMaterial({color:'#756541'}));const leafMat=new T.MeshStandardMaterial({color:'#547e2b',side:T.DoubleSide,roughness:.75});for(let i=0;i<20;i++){const a=i*2.4,base=.9+rand()*height*.48;const reach=.33+rand()*.3;const pts=[];for(let j=0;j<=8;j++){let t=j/8;pts.push(new T.Vector3(x+Math.cos(a)*reach*t,base+Math.sin(t*Math.PI*.8)*.6,z+Math.sin(a)*reach*t));}const g=new T.BufferGeometry(),vs=[],uv=[];for(let j=0;j<pts.length;j++){const width=Math.sin(j/8*Math.PI)*.055;const p=pts[j];vs.push(p.x+Math.sin(a)*width,p.y,p.z-Math.cos(a)*width,p.x-Math.sin(a)*width,p.y,p.z+Math.cos(a)*width);uv.push(0,j/8,1,j/8);}const indices=[];for(let j=0;j<8;j++){let q=j*2;indices.push(q,q+1,q+2,q+1,q+3,q+2);}g.setAttribute('position',new T.Float32BufferAttribute(vs,3));g.setIndex(indices);g.computeVertexNormals();const leaf=new T.Mesh(g,leafMat);leaf.castShadow=true;scene.add(leaf);}for(const dx of [-.2,.2])for(const dz of [-.2,.2])box(.025,.45,.025,x+dx,.23,z+dz,new T.MeshStandardMaterial({color:'#8d5941'}));}
 const workerHeadTurns=[];
 function loungePerson(x,z){
@@ -168,7 +169,7 @@ plant(53.55,-2,2);plant(56.2,-2.5,2.4);plant(97.8,-2.5,2.1);
 // Black wall sconces with warm up/down illumination in the alcoves.
 const sconcePositions=[];
 const sconceLights=Array.from({length:4},()=>{const light=new T.SpotLight('#fff3da',7,3.4,.48,.8,1.3);scene.add(light,light.target);return light;});
-for(const [a,b,d] of [[6.1,15.7,3.6],[38,45,3],[47.5,51.5,3],[76,83,3.5],[89,93,3.4]]){
+for(const [a,b,d] of [[6.1,15.7,3.6],[40.4,47.4,3],[52.9,56.9,3],[81.4,88.4,3.5],[94.4,98.4,3.4]]){
  for(const x of [a+.55,b-.55]){
   box(.16,.36,.13,x,4.05,-d+.17,dark);
   for(const sign of [-1,1]){
@@ -185,6 +186,12 @@ function picture(url,x,y,z,w,h){
  box(w+.04,h+.04,.04,x,y,z+.025,white);
  const mesh=new T.Mesh(new T.PlaneGeometry(w,h),new T.MeshStandardMaterial({map:tex,roughness:.72,metalness:0}));
  mesh.position.set(x,y,z+.052);mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);
+}
+function sidePicture(url,x,y,z,w,h,rotationY){
+ const tex=loader.load(url);tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+ const trim=new T.MeshStandardMaterial({color:'#dedfda',roughness:.42,metalness:.28});
+ const frame=new T.Mesh(new T.BoxGeometry(.1,w+.14,h+.14),trim);frame.position.set(x,y,z);frame.rotation.y=rotationY;frame.castShadow=true;scene.add(frame);
+ const mesh=new T.Mesh(new T.PlaneGeometry(w,h),new T.MeshStandardMaterial({map:tex,roughness:.72,metalness:0}));mesh.position.set(x,y,z);mesh.rotation.y=rotationY;mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);
 }
 surface(5.5,2.8,c=>{text(c,'40+',1.5,1.45,1.5,'#f06a5a',true);wrap(c,'Pomogłem już ponad 40 firmom zbudować silną obecność w sieci, zwiększyć zasięgi i zrealizować cele.',.4,2,4.7,.21);},43.9,2.9,-2.79);
 surface(4.8,4.7,c=>{text(c,'Wybrane realizacje',.35,1.5,.49);wrap(c,'Od stron wizytówek po zaawansowane portale i systemy ecommerce łączące estetykę z funkcjonalnością.',.35,2.1,4,.19);button(c,'Zobacz realizacje',.35,3.78,1.65);},50.15,2.7);
@@ -220,9 +227,9 @@ const formCorners=[new T.Vector3(),new T.Vector3(),new T.Vector3()];
 const videoScreen=document.querySelector('#wall-video');
 const videoCorners=[new T.Vector3(),new T.Vector3(),new T.Vector3()];
 function positionVideoScreen(x){
- const visible=x>5.5&&x<16.5;
- videoScreen.classList.toggle('is-visible',visible);if(!visible)return;
- const coords=[[6.55,4.45,-3.56],[15.25,4.45,-3.56],[6.55,2.43,-3.56]];
+ const visible=x>7&&x<13.5;
+ videoScreen.classList.toggle('is-visible',visible);videoScreen.style.pointerEvents=visible?'auto':'none';if(!visible)return;
+ const coords=[[7.15,4.55,-3.56],[14.45,4.55,-3.56],[7.15,.45,-3.56]];
  const points=coords.map((v,i)=>{const p=videoCorners[i].set(...v).project(camera);return {x:(p.x+1)*innerWidth/2,y:(1-p.y)*innerHeight/2};});
  const [a,b,c]=points;videoScreen.style.transform=`matrix(${(b.x-a.x)/videoScreen.offsetWidth},${(b.y-a.y)/videoScreen.offsetWidth},${(c.x-a.x)/videoScreen.offsetHeight},${(c.y-a.y)/videoScreen.offsetHeight},${a.x},${a.y})`;
 }
