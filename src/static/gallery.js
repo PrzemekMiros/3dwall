@@ -3,7 +3,7 @@ import { Reflector } from './Reflector.js';
 import Lenis from './lenis.mjs';
 import { smoothStep } from './motion.js?v=scroll-detail-pass';
 import titleOutlines from './title-outlines.js';
-import contactOutlines from './contact-outlines.js?v=contact-title-scale';
+import contactOutlines from './contact-outlines.js?v=kontakt-title';
 
 const canvas=document.querySelector('#gallery');
 let renderer;
@@ -159,7 +159,7 @@ projects.forEach(([title,x,file,year,category])=>{
 });
 surface(6.2,2,c=>{text(c,'SPRAWNIE. SOLIDNIE.',.3,.8,.65,'#f06a5a',true);text(c,'Z MYŚLĄ O WYNIKACH.',.3,1.5,.65,'#f06a5a',true);},79.5,3.4,-3.29);
 const table=box(4.1,.12,1.7,79.5,1.15,-1.7,new T.MeshStandardMaterial({color:'#466745',roughness:.65}));for(const x of [78,81])for(const z of [-2.3,-1.1]){const leg=box(.12,1.2,.12,x,.58,z,new T.MeshStandardMaterial({color:'#603c29'}));leg.rotation.z=x<79?.25:-.25;}
-surface(5.4,4.6,c=>{text(c,'Przemek Miros',.4,1.2,.6);wrap(c,'Tworzę strony www skupione na wynikach biznesowych. Kompleksowo prowadzę od strategii, przez design, po wdrożenie i wsparcie.',.4,1.85,4.5,.2);button(c,'Porozmawiajmy',.4,3.15,1.65,true);},86,2.7);
+surface(5.4,4.6,c=>{text(c,'O mnie',.4,1.2,.6);wrap(c,'Tworzę strony www skupione na wynikach biznesowych. Kompleksowo prowadzę od strategii, przez design, po wdrożenie i wsparcie.',.4,1.85,4.5,.2);button(c,'Porozmawiajmy',.4,3.15,1.65,true);},86,2.7);
 makeAction(84.525,1.03,1.65,'Porozmawiajmy',()=>moveTo(98.5));
 pedestal(91,-2);const globe=new T.Mesh(new T.SphereGeometry(.55,40,24),new T.MeshStandardMaterial({color:'#71a8bd',roughness:.38}));globe.position.set(91,2.05,-2);globe.castShadow=true;scene.add(globe);
 // The closing wall pairs sculpted lettering with a real, editable HTML form.
@@ -168,10 +168,8 @@ contactOutlines.forEach((line,index)=>{
  const geometry=new T.ExtrudeGeometry(path.toShapes(false),{depth:.24,steps:1,bevelEnabled:true,bevelThickness:.013,bevelSize:.008,bevelSegments:2,curveSegments:6});
  geometry.computeBoundingBox();const bounds=geometry.boundingBox;const width=bounds.max.x-bounds.min.x;const height=bounds.max.y-bounds.min.y;
  geometry.translate(-bounds.min.x,-bounds.min.y,0);
- const mesh=new T.Mesh(geometry,[titleFront,titleSides]);mesh.scale.set(5.45/width,1.08/height,1);mesh.position.set(92.85,2.2,.045);mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);
+ const mesh=new T.Mesh(geometry,[titleFront,titleSides]);mesh.scale.set(3.9/width,1.08/height,1);mesh.position.set(93.55,2.2,.045);mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);
 });
-surface(2.15,.8,c=>button(c,'Porozmawiajmy',.18,.2,1.48,true),94.18,1.28);
-makeAction(93.42,.62,1.48,'Porozmawiajmy',()=>location.href='mailto:kontakt@przemekmiros.pl');
 const contactForm=document.querySelector('#wall-contact');
 contactForm.addEventListener('submit',event=>{
  event.preventDefault();if(!contactForm.reportValidity())return;

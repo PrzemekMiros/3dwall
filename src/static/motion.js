@@ -2,7 +2,7 @@
 // consistent response at different display refresh rates.
 export function smoothStep(state, target, dt, reduced = false) {
   if (reduced) { state.value = target; state.velocity = 0; return target; }
-  const omega = 3.4;
+  const omega = 4.4;
   const offset = state.value - target;
   const impulse = state.velocity + omega * offset;
   const decay = Math.exp(-omega * dt);
